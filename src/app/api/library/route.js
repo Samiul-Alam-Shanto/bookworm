@@ -62,3 +62,52 @@ export async function POST(request) {
     );
   }
 }
+
+export async function GET(request) {
+  try {
+    const session = await getServerSession(authOptions);
+    if (!session) {
+      return NextResponse.json({ message: "Unauthorized" }, { status: 401 });
+    }
+
+    const client = await clientPromise;
+    const db = client.db("bookworm");
+    const userId = new ObjectId(session.user.id);
+
+    // Aggregation Pipeline
+    const library = await db
+      .collection("users")
+      .aggregate([
+        { $match: { _id: userId } },
+        { $unwind: "$library" }, // Flatten array
+        {
+          $lookup: {
+            from: "books",
+            localField: "library.bookId",
+            foreignField: "_id",
+            as: "bookDetails",
+          },
+        },
+        { $unwind: "$bookDetails" }, // Flatten lookup array
+        {
+          $project: {
+            _id: 0,
+            status: "$library.shelf",
+            progress: "$library.progress",
+            updatedAt: "$library.updatedAt",
+            book: "$bookDetails", // Put full book object here
+          },
+        },
+        { $sort: { updatedAt: -1 } }, // Most recently updated first
+      ])
+      .toArray();
+
+    return NextResponse.json(library);
+  } catch (error) {
+    console.error("Library Fetch Error:", error);
+    return NextResponse.json(
+      { message: "Failed to fetch library" },
+      { status: 500 }
+    );
+  }
+}
