@@ -38,12 +38,21 @@ export default function Navbar() {
                   Admin Panel
                 </Link>
               ) : (
-                <Link
-                  href="/library"
-                  className="text-sm font-medium hover:text-primary"
-                >
-                  My Library
-                </Link>
+                <div className="flex items-center gap-4">
+                  {/* NEW LINK */}
+                  <Link
+                    href="/dashboard"
+                    className="text-sm font-medium hover:text-primary"
+                  >
+                    Home
+                  </Link>
+                  <Link
+                    href="/library"
+                    className="text-sm font-medium hover:text-primary"
+                  >
+                    My Library
+                  </Link>
+                </div>
               )}
 
               <div className="flex items-center gap-2 pl-4 border-l border-border">

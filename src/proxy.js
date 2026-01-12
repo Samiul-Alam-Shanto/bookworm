@@ -36,7 +36,7 @@ export async function proxy(request) {
     if (token.role === "admin") {
       return NextResponse.redirect(new URL("/admin/dashboard", request.url));
     }
-    return NextResponse.redirect(new URL("/library", request.url));
+    return NextResponse.redirect(new URL("/dashboard", request.url));
   }
 
   if (pathname.startsWith("/admin") && token.role !== "admin") {
