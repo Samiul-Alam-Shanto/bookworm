@@ -52,6 +52,12 @@ export default function Navbar() {
                   >
                     My Library
                   </Link>
+                  <Link
+                    href="/tutorials"
+                    className="text-sm font-medium hover:text-primary"
+                  >
+                    Tutorials
+                  </Link>
                 </div>
               )}
 
