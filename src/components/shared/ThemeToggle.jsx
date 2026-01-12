@@ -1,0 +1,20 @@
+"use client";
+
+import { useTheme } from "next-themes";
+import { Moon, Sun } from "lucide-react";
+
+export default function ThemeToggle() {
+  const { resolvedTheme, setTheme } = useTheme();
+
+  if (!resolvedTheme) return null;
+
+  return (
+    <button
+      onClick={() => setTheme(resolvedTheme === "dark" ? "light" : "dark")}
+      className="p-2 rounded-full hover:bg-slate-200 dark:hover:bg-slate-700 transition-colors text-foreground"
+      aria-label="Toggle Theme"
+    >
+      {resolvedTheme === "dark" ? <Sun size={20} /> : <Moon size={20} />}
+    </button>
+  );
+}

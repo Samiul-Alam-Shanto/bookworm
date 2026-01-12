@@ -1,7 +1,12 @@
 import { Inter, Merriweather } from "next/font/google";
+import { Toaster } from "react-hot-toast";
+import { ThemeProvider } from "next-themes";
+import AuthProvider from "@/components/providers/AuthProvider";
+import QueryProvider from "@/components/providers/QueryProvider";
 import "./globals.css";
-import Providers from "@/components/providers/Providers";
+import Navbar from "@/components/shared/Navbar";
 
+// Configure Fonts
 const inter = Inter({
   subsets: ["latin"],
   variable: "--font-inter",
@@ -28,9 +33,24 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en" suppressHydrationWarning>
       <body
+        suppressHydrationWarning
         className={`${inter.variable} ${merriweather.variable} antialiased bg-background text-foreground`}
       >
-        <Providers>{children}</Providers>
+        <AuthProvider>
+          <QueryProvider>
+            <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+              <Toaster
+                position="top-right"
+                toastOptions={{
+                  className: "dark:bg-slate-800 dark:text-white",
+                  style: { borderRadius: "8px", padding: "16px" },
+                }}
+              />
+              <Navbar />
+              {children}
+            </ThemeProvider>
+          </QueryProvider>
+        </AuthProvider>
       </body>
     </html>
   );
