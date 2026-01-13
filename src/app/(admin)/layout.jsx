@@ -38,7 +38,7 @@ export default function AdminLayout({ children }) {
 
       <aside
         className={`
-          fixed lg:static inset-y-0 left-0 z-40 w-64 bg-card border-r border-border transform transition-transform duration-200 ease-in-out
+          fixed  inset-y-0 left-0 z-40 w-64 bg-card border-r border-border transform transition-transform duration-200 ease-in-out
           ${
             isMobileMenuOpen
               ? "translate-x-0"
@@ -81,7 +81,7 @@ export default function AdminLayout({ children }) {
         </div>
       </aside>
 
-      <div className="flex-1 flex flex-col min-w-0">
+      <div className="flex-1 lg:ml-64 flex flex-col min-w-0">
         <Navbar />
         <main className="flex-1 p-4 lg:p-8 overflow-y-auto">{children}</main>
       </div>

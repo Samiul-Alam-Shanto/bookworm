@@ -103,7 +103,7 @@ export default function AdvancedFilterBar({ allGenres }) {
           <select
             value={sortBy}
             onChange={(e) => setSortBy(e.target.value)}
-            className="bg-transparent border-none focus:ring-0 text-sm font-medium w-full cursor-pointer outline-none"
+            className="bg-card border-none focus:ring-0 text-sm font-medium w-full cursor-pointer outline-none"
           >
             <option value="newest">Newest Added</option>
             <option value="rating_desc">Highest Rated</option>

@@ -63,12 +63,12 @@ export async function GET() {
           is_deleted: { $ne: true },
         })
         .sort({ average_rating: -1 })
-        .limit(10)
+        .limit(15)
         .toArray();
     }
 
     //  Fallback (Popular/Top Rated)
-    if (recommendations.length < 8) {
+    if (recommendations.length < 15) {
       const existingIds = [
         ...excludedBookIds,
         ...recommendations.map((b) => b._id),
@@ -81,7 +81,7 @@ export async function GET() {
           is_deleted: { $ne: true },
         })
         .sort({ average_rating: -1, total_reviews: -1 })
-        .limit(10 - recommendations.length)
+        .limit(15 - recommendations.length)
         .toArray();
 
       recommendations = [...recommendations, ...popularBooks];

@@ -65,7 +65,7 @@ export default function AdminDashboard() {
           </div>
           <button
             onClick={() => setIsBookModalOpen(true)}
-            className="flex items-center gap-2 px-6 py-3 bg-primary hover:bg-primary/90 text-white rounded-xl font-bold transition shadow-lg shadow-primary/25 transform hover:-translate-y-1"
+            className="flex items-center text-nowrap gap-2 px-6 py-3 bg-primary hover:bg-primary/90 text-white rounded-xl font-bold transition shadow-lg shadow-primary/25 transform hover:-translate-y-1"
           >
             <Plus size={20} /> Add New Book
           </button>

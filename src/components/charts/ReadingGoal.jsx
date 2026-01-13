@@ -15,7 +15,7 @@ export default function ReadingGoal({ current, target }) {
   return (
     <div className="bg-card border border-border rounded-xl p-6 shadow-sm flex flex-col items-center justify-center">
       <h3 className="text-lg font-bold font-serif mb-2">
-        2025 Reading Challenge
+        2026 Reading Challenge
       </h3>
 
       <div className="h-48 w-full relative">

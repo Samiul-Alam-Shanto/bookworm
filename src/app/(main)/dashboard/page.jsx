@@ -30,7 +30,7 @@ export default function DashboardPage() {
   });
 
   return (
-    <div className="container mx-auto px-4 py-8 space-y-12">
+    <div className="container mx-auto px-4 py-14 space-y-12">
       {/* 1. Header */}
       <div className="flex flex-col md:flex-row items-center justify-center md:justify-between md:items-end gap-4 pb-4 border-b border-border">
         <div>
