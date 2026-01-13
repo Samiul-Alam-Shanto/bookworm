@@ -9,6 +9,7 @@ import ActivityChart from "@/components/charts/ActivityChart"; // New
 import GenrePieChart from "@/components/charts/GenrePieChart"; // New
 import { Loader2, Sparkles, BookOpen } from "lucide-react";
 import Link from "next/link";
+import { BookCardSkeleton, ChartSkeleton } from "@/components/ui/Skeletons";
 
 export default function DashboardPage() {
   const { user } = useAuth();
@@ -47,7 +48,11 @@ export default function DashboardPage() {
 
       {/*  Charts Grid */}
       {statsLoading ? (
-        <div className="h-64 bg-muted animate-pulse rounded-xl" />
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+          <ChartSkeleton />
+          <ChartSkeleton />
+          <ChartSkeleton />
+        </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {/*  Reading Goal (Circular) */}
@@ -72,13 +77,19 @@ export default function DashboardPage() {
         </div>
 
         {recLoading ? (
-          <div className="flex justify-center py-12">
-            <Loader2 className="animate-spin text-primary" size={32} />
+          <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6">
+            {[...Array(5)].map((_, i) => (
+              <BookCardSkeleton key={i} />
+            ))}
           </div>
         ) : recommendations.length > 0 ? (
           <div className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-6">
             {recommendations.map((book) => (
-              <BookCard key={book._id} book={book} />
+              <BookCard
+                key={book._id}
+                book={book}
+                reason={"For Your Recent Activity"}
+              />
             ))}
           </div>
         ) : (

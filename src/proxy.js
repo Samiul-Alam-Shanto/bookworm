@@ -39,6 +39,13 @@ export async function proxy(request) {
     return NextResponse.redirect(new URL("/dashboard", request.url));
   }
 
+  if (
+    (pathname.startsWith("/dashboard") || pathname.startsWith("/library")) &&
+    token.role === "admin"
+  ) {
+    return NextResponse.redirect(new URL("/admin/dashboard", request.url));
+  }
+
   if (pathname.startsWith("/admin") && token.role !== "admin") {
     return NextResponse.redirect(new URL("/library", request.url));
   }

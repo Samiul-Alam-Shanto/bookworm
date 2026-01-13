@@ -16,7 +16,7 @@ import { useState } from "react";
 const adminLinks = [
   { name: "Dashboard", href: "/admin/dashboard", icon: LayoutDashboard },
   { name: "Manage Books", href: "/admin/books", icon: Book },
-  { name: "Manage Genres", href: "/admin/genres", icon: Menu }, // Using Menu icon for List/Genre
+  { name: "Manage Genres", href: "/admin/genres", icon: Menu },
   { name: "Manage Users", href: "/admin/users", icon: Users },
   { name: "Reviews", href: "/admin/reviews", icon: MessageSquare },
   { name: "Tutorials", href: "/admin/tutorials", icon: Video },
@@ -77,12 +77,6 @@ export default function AdminLayout({ children }) {
               );
             })}
           </nav>
-
-          <div className="p-4 border-t border-border">
-            <p className="text-xs text-muted-foreground text-center">
-              BookWorm v1.0
-            </p>
-          </div>
         </div>
       </aside>
 

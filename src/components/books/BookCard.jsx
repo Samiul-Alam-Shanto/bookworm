@@ -2,11 +2,20 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { Star } from "lucide-react";
+import { Star, Sparkles } from "lucide-react";
 
-export default function BookCard({ book }) {
+export default function BookCard({ book, reason }) {
   return (
-    <Link href={`/books/${book._id}`} className="group h-full flex flex-col">
+    <Link
+      href={`/books/${book._id}`}
+      className="group h-full flex flex-col relative"
+    >
+      {reason && (
+        <div className="absolute -top-3 left-1/2 -translate-x-1/2 z-20 bg-amber-500 text-white text-[10px] font-bold px-2 py-1 rounded-full shadow-md flex items-center gap-1 whitespace-nowrap opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+          <Sparkles size={10} /> {reason}
+        </div>
+      )}
+
       <div className="relative w-full aspect-2/3 rounded-lg overflow-hidden shadow-sm border border-border group-hover:shadow-md transition-all duration-300 group-hover:-translate-y-1">
         <Image
           src={
@@ -17,7 +26,6 @@ export default function BookCard({ book }) {
           className="object-cover"
           sizes="(max-width: 768px) 50vw, 33vw"
         />
-        {/* Hover Overlay */}
         <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
           <span className="px-4 py-2 bg-white/90 text-black text-sm font-bold rounded-full transform scale-90 group-hover:scale-100 transition-transform">
             View Details
