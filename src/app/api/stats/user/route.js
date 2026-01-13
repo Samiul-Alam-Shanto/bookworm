@@ -4,6 +4,48 @@ import { getServerSession } from "next-auth";
 import { authOptions } from "../../auth/[...nextauth]/route";
 import { ObjectId } from "mongodb";
 
+function calculateStreak(dates) {
+  if (!dates.length) return 0;
+
+  // Sort dates descending (newest first)
+  const sorted = dates
+    .map((d) => new Date(d).setHours(0, 0, 0, 0))
+    .sort((a, b) => b - a);
+
+  // Remove duplicates
+  const uniqueDates = [...new Set(sorted)];
+
+  let streak = 0;
+  const today = new Date().setHours(0, 0, 0, 0);
+  const yesterday = new Date(today);
+  yesterday.setDate(yesterday.getDate() - 1);
+
+  // Check if activity started today or yesterday
+  if (uniqueDates[0] !== today && uniqueDates[0] !== yesterday.getTime()) {
+    return 0;
+  }
+
+  // Count consecutive days
+  for (let i = 0; i < uniqueDates.length; i++) {
+    const current = new Date(uniqueDates[i]);
+    const expected = new Date(today);
+    expected.setDate(expected.getDate() - i);
+    // Adjust expected if user didn't log today but logged yesterday (streak still valid)
+    const expectedYesterday = new Date(yesterday);
+    expectedYesterday.setDate(expectedYesterday.getDate() - i);
+
+    if (
+      uniqueDates[i] === expected.getTime() ||
+      uniqueDates[i] === expectedYesterday.getTime()
+    ) {
+      streak++;
+    } else {
+      break;
+    }
+  }
+  return streak;
+}
+
 export async function GET() {
   try {
     const session = await getServerSession(authOptions);
@@ -70,8 +112,11 @@ export async function GET() {
       genreStats = Object.entries(genreCounts)
         .map(([name, value]) => ({ name, value }))
         .sort((a, b) => b.value - a.value)
-        .slice(0, 5); // Top 5
+        .slice(0, 5);
     }
+
+    const activityDates = library.map((item) => item.updatedAt);
+    const currentStreak = calculateStreak(activityDates);
 
     return NextResponse.json({
       goal: {
@@ -80,6 +125,7 @@ export async function GET() {
       },
       stats: {
         totalPages: totalPagesRead,
+        streak: currentStreak,
         avgRating: 0,
       },
       monthly: monthlyData.map((count, index) => ({
