@@ -12,6 +12,7 @@ import {
   X,
 } from "lucide-react";
 import { useState } from "react";
+import Navbar from "@/components/shared/Navbar";
 
 const adminLinks = [
   { name: "Dashboard", href: "/admin/dashboard", icon: LayoutDashboard },
@@ -80,7 +81,8 @@ export default function AdminLayout({ children }) {
         </div>
       </aside>
 
-      <div className="flex-1 flex flex-col min-w-0 overflow-hidden">
+      <div className="flex-1 flex flex-col min-w-0">
+        <Navbar />
         <main className="flex-1 p-4 lg:p-8 overflow-y-auto">{children}</main>
       </div>
     </div>

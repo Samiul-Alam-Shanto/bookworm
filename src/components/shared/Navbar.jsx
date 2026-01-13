@@ -31,12 +31,9 @@ export default function Navbar() {
           ) : session ? (
             <div className="flex items-center gap-4">
               {session.user.role === "admin" ? (
-                <Link
-                  href="/admin/dashboard"
-                  className="text-sm font-medium hover:text-primary"
-                >
+                <p className="text-sm font-medium cursor-default hover:text-primary">
                   Admin Panel
-                </Link>
+                </p>
               ) : (
                 <div className="flex items-center gap-4">
                   {/* NEW LINK */}

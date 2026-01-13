@@ -39,10 +39,10 @@ export default function DashboardPage() {
           </p>
         </div>
         <Link
-          href="/library"
+          href="/books"
           className="flex items-center gap-2 text-primary font-medium hover:underline"
         >
-          <BookOpen size={18} /> Go to Library
+          <BookOpen size={18} /> See All Books
         </Link>
       </div>
 

@@ -2,7 +2,7 @@ export function BookCardSkeleton() {
   return (
     <div className="flex flex-col h-full animate-pulse">
       {/* Cover */}
-      <div className="w-full aspect-[2/3] bg-muted rounded-lg mb-3" />
+      <div className="w-full aspect-2/3 bg-muted rounded-lg mb-3" />
       {/* Title */}
       <div className="h-4 bg-muted rounded w-3/4 mb-2" />
       {/* Author */}

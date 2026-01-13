@@ -76,7 +76,7 @@ export default async function BookDetailsPage(props) {
         {/* TOP SECTION: Book Info */}
         <div className="flex flex-col md:flex-row gap-8 lg:gap-12 mb-16">
           <div className="w-full md:w-1/3 flex flex-col gap-6">
-            <div className="relative w-full aspect-[2/3] rounded-xl overflow-hidden shadow-2xl border border-border">
+            <div className="relative w-full aspect-2/3 rounded-xl overflow-hidden shadow-2xl border border-border">
               <Image
                 src={book.cover_image}
                 alt={book.title}
