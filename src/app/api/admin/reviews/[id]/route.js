@@ -6,10 +6,12 @@ import { ObjectId } from "mongodb";
 
 // Helper to Recalculate Stats
 async function updateBookStats(db, bookId) {
+  const bId = new ObjectId(bookId);
+
   const stats = await db
     .collection("reviews")
     .aggregate([
-      { $match: { bookId: bookId, status: "approved" } },
+      { $match: { bookId: bId, status: "approved" } },
       {
         $group: {
           _id: "$bookId",
@@ -22,7 +24,7 @@ async function updateBookStats(db, bookId) {
 
   if (stats.length > 0) {
     await db.collection("books").updateOne(
-      { _id: bookId },
+      { _id: bId },
       {
         $set: {
           average_rating: stats[0].avgRating,
@@ -31,11 +33,10 @@ async function updateBookStats(db, bookId) {
       }
     );
   } else {
-    // If no reviews left, reset to 0
     await db
       .collection("books")
       .updateOne(
-        { _id: bookId },
+        { _id: bId },
         { $set: { average_rating: 0, total_reviews: 0 } }
       );
   }
@@ -48,13 +49,12 @@ export async function PATCH(request, { params }) {
     if (!session || session.user.role !== "admin")
       return NextResponse.json({ message: "Unauthorized" }, { status: 403 });
 
-    const { id } = params;
+    const { id } = await params;
     const { status } = await request.json();
 
     const client = await clientPromise;
     const db = client.db("bookworm");
 
-    //  Get the review first to know which book it belongs to
     const review = await db
       .collection("reviews")
       .findOne({ _id: new ObjectId(id) });
@@ -64,16 +64,15 @@ export async function PATCH(request, { params }) {
         { status: 404 }
       );
 
-    //  Update Status
     await db
       .collection("reviews")
       .updateOne({ _id: new ObjectId(id) }, { $set: { status } });
 
-    //  Trigger Recalculation
     await updateBookStats(db, review.bookId);
 
     return NextResponse.json({ message: "Review updated" });
   } catch (error) {
+    // console.error("Review Patch Error:", error);
     return NextResponse.json({ message: "Error" }, { status: 500 });
   }
 }
@@ -85,11 +84,10 @@ export async function DELETE(request, { params }) {
     if (!session || session.user.role !== "admin")
       return NextResponse.json({ message: "Unauthorized" }, { status: 403 });
 
-    const { id } = params;
+    const { id } = await params;
     const client = await clientPromise;
     const db = client.db("bookworm");
 
-    //  Get review to find bookId
     const review = await db
       .collection("reviews")
       .findOne({ _id: new ObjectId(id) });
@@ -99,14 +97,13 @@ export async function DELETE(request, { params }) {
         { status: 404 }
       );
 
-    //  Delete
     await db.collection("reviews").deleteOne({ _id: new ObjectId(id) });
 
-    //  Trigger Recalculation (Crucial: removing a review changes the average)
     await updateBookStats(db, review.bookId);
 
     return NextResponse.json({ message: "Review deleted" });
   } catch (error) {
+    console.error("Review Delete Error:", error);
     return NextResponse.json({ message: "Error" }, { status: 500 });
   }
 }

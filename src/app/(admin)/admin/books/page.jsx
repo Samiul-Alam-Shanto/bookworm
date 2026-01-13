@@ -340,7 +340,7 @@ export default function ManageBooksPage() {
                       ))}
                     </td>
                     <td className="px-6 py-4 text-sm">{book.total_pages}</td>
-                    <td className="px-6 py-4 text-right space-x-2">
+                    <td className="px-6 py-4 text-right xl:space-x-2">
                       <button
                         onClick={() => handleEdit(book)}
                         className="p-2 text-blue-500 hover:bg-blue-50 rounded-lg transition"
