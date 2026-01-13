@@ -7,6 +7,16 @@ export async function proxy(request) {
     secret: process.env.NEXTAUTH_SECRET,
   });
 
+  const USER_PAGES = [
+    "/library",
+    "/profile",
+    "/dashboard",
+    "/community",
+    "/tutorials",
+    "/books",
+    "/user",
+  ];
+
   const { pathname } = request.nextUrl;
 
   if (
@@ -40,8 +50,8 @@ export async function proxy(request) {
   }
 
   if (
-    (pathname.startsWith("/dashboard") || pathname.startsWith("/library")) &&
-    token.role === "admin"
+    token.role === "admin" &&
+    USER_PAGES.some((path) => pathname.startsWith(path))
   ) {
     return NextResponse.redirect(new URL("/admin/dashboard", request.url));
   }

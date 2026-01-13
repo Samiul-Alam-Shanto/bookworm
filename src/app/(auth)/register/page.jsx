@@ -5,6 +5,7 @@ import { useRouter } from "next/navigation";
 import Link from "next/link";
 import { toast } from "react-hot-toast";
 import { axiosPublic } from "@/lib/axios";
+import { signIn } from "next-auth/react";
 
 // Helper function remains outside component
 const uploadImageToImgBB = async (file) => {
@@ -31,7 +32,7 @@ export default function RegisterPage() {
 
   const onSubmit = async (data) => {
     try {
-      //   Image Upload
+      //  Image Upload
       let photoUrl = "https://i.ibb.co/5GzXywq/default-avatar.png";
 
       if (data.photo && data.photo.length > 0) {
@@ -53,10 +54,8 @@ export default function RegisterPage() {
         photo: photoUrl,
       };
 
-      // Register User
       await axiosPublic.post("/auth/register", userInfo);
 
-      // AUTO LOGIN
       toast.loading("Logging you in...");
 
       const loginResult = await signIn("credentials", {
@@ -67,7 +66,7 @@ export default function RegisterPage() {
 
       toast.dismiss();
 
-      if (loginResult.error) {
+      if (loginResult?.error) {
         toast.error(
           "Account created, but auto-login failed. Please login manually."
         );
@@ -75,10 +74,11 @@ export default function RegisterPage() {
       } else {
         toast.success("Welcome to BookWorm!");
         router.refresh();
-        router.push("/library");
+        router.push("/dashboard");
       }
     } catch (error) {
       toast.dismiss();
+      // console.error(error);
       const msg = error.response?.data?.message || "Registration failed";
       toast.error(msg);
     }

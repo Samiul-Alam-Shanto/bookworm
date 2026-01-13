@@ -4,11 +4,13 @@ import Link from "next/link";
 import Image from "next/image";
 import { useSession, signOut } from "next-auth/react";
 import ThemeToggle from "./ThemeToggle";
-import { BookOpen, LogOut, User } from "lucide-react";
+import { BookOpen, LogOut, User, Menu, X } from "lucide-react";
+import { useState } from "react";
 
 export default function Navbar() {
   const { data: session, status } = useSession();
   const isLoading = status === "loading";
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
 
   return (
     <nav className="border-b border-border bg-card/80 backdrop-blur-md sticky top-0 z-50">
@@ -19,11 +21,11 @@ export default function Navbar() {
           className="flex items-center gap-2 font-serif font-bold text-xl text-primary"
         >
           <BookOpen size={24} />
-          <span>BookWorm</span>
+          <span className="hidden sm:inline">BookWorm</span>
         </Link>
 
-        {/* Actions */}
-        <div className="flex items-center gap-4">
+        {/* Desktop Actions */}
+        <div className="hidden md:flex items-center gap-4">
           <ThemeToggle />
 
           {isLoading ? (
@@ -36,22 +38,27 @@ export default function Navbar() {
                 </p>
               ) : (
                 <div className="flex items-center gap-4">
-                  {/* NEW LINK */}
                   <Link
                     href="/dashboard"
-                    className="text-sm font-medium hover:text-primary"
+                    className="text-sm font-medium hover:text-primary transition"
                   >
                     Home
                   </Link>
                   <Link
                     href="/library"
-                    className="text-sm font-medium hover:text-primary"
+                    className="text-sm font-medium hover:text-primary transition"
                   >
                     My Library
                   </Link>
                   <Link
+                    href="/community"
+                    className="text-sm font-medium hover:text-primary transition"
+                  >
+                    Community
+                  </Link>
+                  <Link
                     href="/tutorials"
-                    className="text-sm font-medium hover:text-primary"
+                    className="text-sm font-medium hover:text-primary transition"
                   >
                     Tutorials
                   </Link>
@@ -88,7 +95,7 @@ export default function Navbar() {
             <div className="flex gap-3">
               <Link
                 href="/login"
-                className="px-4 py-2 text-sm font-medium hover:text-primary"
+                className="px-4 py-2 text-sm font-medium hover:text-primary transition"
               >
                 Login
               </Link>
@@ -101,7 +108,122 @@ export default function Navbar() {
             </div>
           )}
         </div>
+
+        {/* Mobile Menu Button */}
+        <div className="flex md:hidden items-center gap-3">
+          <ThemeToggle />
+          <button
+            onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+            className="p-2 hover:bg-muted rounded-lg transition"
+            aria-label="Toggle menu"
+          >
+            {mobileMenuOpen ? <X size={24} /> : <Menu size={24} />}
+          </button>
+        </div>
       </div>
+
+      {/* Mobile Menu */}
+      {mobileMenuOpen && (
+        <div className="md:hidden border-t border-border bg-card">
+          <div className="container mx-auto px-4 py-4 space-y-4">
+            {isLoading ? (
+              <div className="w-full h-8 bg-muted/50 rounded animate-pulse" />
+            ) : session ? (
+              <>
+                {session.user.role !== "admin" && (
+                  <div className="flex flex-col gap-2">
+                    <Link
+                      href="/dashboard"
+                      className="text-sm font-medium py-2 hover:text-primary transition"
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      Home
+                    </Link>
+                    <Link
+                      href="/library"
+                      className="text-sm font-medium py-2 hover:text-primary transition"
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      My Library
+                    </Link>
+                    <Link
+                      href="/community"
+                      className="text-sm font-medium py-2 hover:text-primary transition"
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      Community
+                    </Link>
+                    <Link
+                      href="/tutorials"
+                      className="text-sm font-medium py-2 hover:text-primary transition"
+                      onClick={() => setMobileMenuOpen(false)}
+                    >
+                      Tutorials
+                    </Link>
+                  </div>
+                )}
+
+                <div
+                  className={`flex items-center gap-3 ${
+                    session.user.role !== "admin"
+                      ? "pt-3 border-t border-border"
+                      : ""
+                  }`}
+                >
+                  <div className="relative w-10 h-10 rounded-full overflow-hidden border border-border">
+                    {session.user.image ? (
+                      <Image
+                        src={session.user.image}
+                        alt={session.user.name}
+                        fill
+                        className="object-cover"
+                        sizes="40px"
+                      />
+                    ) : (
+                      <div className="w-full h-full bg-muted flex items-center justify-center">
+                        <User size={20} />
+                      </div>
+                    )}
+                  </div>
+                  <div className="flex-1">
+                    <p className="text-sm font-medium">{session.user.name}</p>
+                    <p className="text-xs text-muted-foreground">
+                      {session.user.email}
+                    </p>
+                  </div>
+                  <button
+                    onClick={() => {
+                      setMobileMenuOpen(false);
+                      signOut({ callbackUrl: "/login" });
+                    }}
+                    className="p-2 text-red-500 hover:bg-red-50 dark:hover:bg-red-900/20 rounded-full transition"
+                    title="Sign Out"
+                  >
+                    <LogOut size={20} />
+                  </button>
+                </div>
+              </>
+            ) : (
+              <div className="flex flex-col gap-2">
+                <Link
+                  href="/login"
+                  className="w-full px-4 py-2 text-sm font-medium text-center hover:text-primary transition border border-border rounded-lg"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Login
+                </Link>
+                <Link
+                  href="/register"
+                  className="w-full px-4 py-2 text-sm font-medium text-center bg-primary text-primary-foreground rounded-lg hover:opacity-90 transition"
+                  onClick={() => setMobileMenuOpen(false)}
+                >
+                  Register
+                </Link>
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </nav>
   );
 }
