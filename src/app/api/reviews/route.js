@@ -3,6 +3,7 @@ import clientPromise from "@/lib/mongodb";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../auth/[...nextauth]/route";
 import { ObjectId } from "mongodb";
+import { logActivity } from "@/lib/activity";
 
 // POST: Submit a Review
 export async function POST(request) {
@@ -14,6 +15,7 @@ export async function POST(request) {
     const body = await request.json();
     const { bookId, rating, comment } = body;
 
+    // console.log("server", bookId);
     if (!bookId || !rating || !comment) {
       return NextResponse.json({ message: "Missing fields" }, { status: 400 });
     }
@@ -46,6 +48,17 @@ export async function POST(request) {
     };
 
     await db.collection("reviews").insertOne(newReview);
+
+    await logActivity({
+      userId: session.user.id,
+      type: "REVIEW",
+      bookId: bookId,
+      meta: {
+        rating: Number(rating),
+        comment:
+          comment.length > 80 ? comment.substring(0, 80) + "..." : comment,
+      },
+    });
 
     return NextResponse.json(
       { message: "Review submitted for approval!" },

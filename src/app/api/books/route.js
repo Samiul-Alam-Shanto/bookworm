@@ -16,7 +16,7 @@ export async function GET(request) {
       .sort({ created_at: -1 })
       .toArray();
 
-    console.log(`Found ${books.length} books`);
+    // console.log(`Found ${books.length} books`);
 
     return NextResponse.json(books);
   } catch (error) {

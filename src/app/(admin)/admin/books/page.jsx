@@ -112,7 +112,7 @@ export default function ManageBooksPage() {
                       </p>
                     </td>
                     <td className="px-6 py-4">
-                      {/* Handle Multi-Select Display */}
+                      {/*  Multi-Select Display */}
                       {book.genres?.map((g) => (
                         <span
                           key={g}

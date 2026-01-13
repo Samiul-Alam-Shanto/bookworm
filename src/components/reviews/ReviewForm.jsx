@@ -24,6 +24,7 @@ export default function ReviewForm({ bookId }) {
       toast.error(err.response?.data?.message || "Failed to submit review");
     },
   });
+  // console.log(bookId);
 
   const handleSubmit = (e) => {
     e.preventDefault();

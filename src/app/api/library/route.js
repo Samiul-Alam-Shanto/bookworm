@@ -3,6 +3,7 @@ import clientPromise from "@/lib/mongodb";
 import { getServerSession } from "next-auth";
 import { authOptions } from "../auth/[...nextauth]/route";
 import { ObjectId } from "mongodb";
+import { logActivity } from "@/lib/activity";
 
 export async function POST(request) {
   try {
@@ -13,7 +14,6 @@ export async function POST(request) {
 
     const body = await request.json();
     const { bookId, shelf, progress } = body;
-    // shelf: "want-to-read", "currently-reading", "read", "none"
 
     if (!bookId || !shelf) {
       return NextResponse.json({ message: "Missing fields" }, { status: 400 });
@@ -24,7 +24,7 @@ export async function POST(request) {
     const userId = new ObjectId(session.user.id);
     const bookObjectId = new ObjectId(bookId);
 
-    //  Remove existing entry for this book
+    // Remove existing entry
     await db
       .collection("users")
       .updateOne(
@@ -32,26 +32,31 @@ export async function POST(request) {
         { $pull: { library: { bookId: bookObjectId } } }
       );
 
-    //  If shelf is "none" (Remove from library)
     if (shelf === "none") {
-      return NextResponse.json({ message: "Book removed from library" });
+      return NextResponse.json({ message: "Book removed" });
     }
 
-    //  Prepare new entry
+    //  Add new entry
     const newEntry = {
       bookId: bookObjectId,
       shelf,
       progress: Number(progress) || 0,
       updatedAt: new Date(),
-      // Add 'startedAt' if currently reading, 'finishedAt' if read
       ...(shelf === "currently-reading" && { startedAt: new Date() }),
-      ...(shelf === "read" && { finishedAt: new Date(), progress: 100 }), // Force 100% if read
+      ...(shelf === "read" && { finishedAt: new Date(), progress: 100 }),
     };
 
-    //  Push new entry
     await db
       .collection("users")
       .updateOne({ _id: userId }, { $push: { library: newEntry } });
+
+    //  Log Activity
+    await logActivity({
+      userId: session.user.id,
+      type: "SHELF_UPDATE",
+      bookId: bookId,
+      meta: { shelf },
+    });
 
     return NextResponse.json({ message: "Library updated" });
   } catch (error) {

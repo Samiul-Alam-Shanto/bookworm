@@ -7,6 +7,7 @@ import ShelfButton from "@/components/books/ShelfButton";
 import ReviewForm from "@/components/reviews/ReviewForm";
 import { Star, BookOpen, User } from "lucide-react";
 import { ObjectId } from "mongodb";
+import Link from "next/link";
 
 async function getBookData(id) {
   const client = await clientPromise;
@@ -69,6 +70,8 @@ export default async function BookDetailsPage(props) {
   if (!data) return notFound();
 
   const { book, reviews, userStatus } = data;
+
+  // console.log(book._id);
 
   return (
     <div className="container mx-auto px-4 py-8 md:py-12">
@@ -160,7 +163,10 @@ export default async function BookDetailsPage(props) {
                     className="bg-card p-4 rounded-xl border border-border"
                   >
                     <div className="flex items-center gap-3 mb-2">
-                      <div className="relative w-8 h-8 rounded-full overflow-hidden bg-muted">
+                      <Link
+                        href={`/users/${review.userId}`}
+                        className="relative w-8 h-8 rounded-full overflow-hidden bg-muted"
+                      >
                         {review.userImage ? (
                           <Image
                             src={review.userImage}
@@ -173,10 +179,13 @@ export default async function BookDetailsPage(props) {
                             <User size={16} />
                           </div>
                         )}
-                      </div>
-                      <span className="font-bold text-sm">
+                      </Link>
+                      <Link
+                        href={`/users/${review.userId}`}
+                        className="font-bold text-sm"
+                      >
                         {review.userName}
-                      </span>
+                      </Link>
                       <span className="text-xs text-muted-foreground ml-auto">
                         {new Date(review.createdAt).toLocaleDateString()}
                       </span>
