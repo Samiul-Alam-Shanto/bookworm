@@ -5,19 +5,28 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { axiosPublic, axiosSecure } from "@/lib/axios";
 import { toast } from "react-hot-toast";
 import Image from "next/image";
-import { Plus, Edit, Trash2, Loader2 } from "lucide-react";
+import { Plus, Edit, Trash2, Loader2, Search, X } from "lucide-react";
 import Swal from "sweetalert2";
 import BookFormModal from "@/components/admin/BookFormModal";
+
 export default function ManageBooksPage() {
   const queryClient = useQueryClient();
 
-  // Clean State: Only need modal control
   const [isFormOpen, setIsFormOpen] = useState(false);
   const [editingBook, setEditingBook] = useState(null);
+  const [searchTerm, setSearchTerm] = useState("");
 
   const { data: books = [], isLoading } = useQuery({
     queryKey: ["books"],
     queryFn: async () => (await axiosPublic.get("/books")).data,
+  });
+
+  const filteredBooks = books.filter((book) => {
+    const term = searchTerm.toLowerCase();
+    return (
+      book.title.toLowerCase().includes(term) ||
+      book.author.toLowerCase().includes(term)
+    );
   });
 
   const deleteMutation = useMutation({
@@ -52,14 +61,42 @@ export default function ManageBooksPage() {
 
   return (
     <div className="max-w-6xl mx-auto space-y-6">
-      <div className="flex justify-between items-center">
+      {/* Header with Search and Add Button */}
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
         <h1 className="text-3xl font-bold font-serif">Manage Books</h1>
-        <button
-          onClick={handleCreate}
-          className="flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:opacity-90 transition"
-        >
-          <Plus size={18} /> Add Book
-        </button>
+
+        <div className="flex gap-3 w-full md:w-auto">
+          {/* [NEW] Search Input */}
+          <div className="relative flex-1 md:w-64">
+            <Search
+              className="absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+              size={18}
+            />
+            <input
+              type="text"
+              placeholder="Search title or author..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="w-full pl-10 pr-4 py-2 bg-card border border-border rounded-lg focus:outline-none focus:ring-2 focus:ring-primary/50 transition shadow-sm"
+            />
+            {searchTerm && (
+              <button
+                onClick={() => setSearchTerm("")}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
+              >
+                <X size={14} />
+              </button>
+            )}
+          </div>
+
+          <button
+            onClick={handleCreate}
+            className="flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg hover:opacity-90 transition font-medium shadow-sm whitespace-nowrap"
+          >
+            <Plus size={18} />{" "}
+            <span className="hidden sm:inline">Add Book</span>
+          </button>
+        </div>
       </div>
 
       {/* Table Section */}
@@ -83,17 +120,20 @@ export default function ManageBooksPage() {
                     Loading...
                   </td>
                 </tr>
-              ) : books.length === 0 ? (
+              ) : filteredBooks.length === 0 ? (
+                // Handle Empty State based on Search vs Empty DB
                 <tr>
                   <td
                     colSpan="5"
-                    className="px-6 py-8 text-center text-muted-foreground"
+                    className="px-6 py-12 text-center text-muted-foreground"
                   >
-                    No books found.
+                    {searchTerm
+                      ? `No books found matching "${searchTerm}"`
+                      : "No books found. Add one to get started!"}
                   </td>
                 </tr>
               ) : (
-                books.map((book) => (
+                filteredBooks.map((book) => (
                   <tr key={book._id} className="hover:bg-muted/10 transition">
                     <td className="px-6 py-4">
                       <div className="relative w-12 h-16 rounded overflow-hidden shadow-sm bg-muted">
@@ -112,7 +152,6 @@ export default function ManageBooksPage() {
                       </p>
                     </td>
                     <td className="px-6 py-4">
-                      {/*  Multi-Select Display */}
                       {book.genres?.map((g) => (
                         <span
                           key={g}
@@ -123,16 +162,18 @@ export default function ManageBooksPage() {
                       ))}
                     </td>
                     <td className="px-6 py-4 text-sm">{book.total_pages}</td>
-                    <td className="px-6 py-4 text-right space-x-2">
+                    <td className="px-6 py-4 text-right space-x-2 whitespace-nowrap">
                       <button
                         onClick={() => handleEdit(book)}
-                        className="p-2 text-blue-500 hover:bg-blue-50 rounded-lg"
+                        className="p-2 text-blue-500 hover:bg-blue-50 rounded-lg transition"
+                        title="Edit"
                       >
                         <Edit size={18} />
                       </button>
                       <button
                         onClick={() => handleDelete(book._id)}
-                        className="p-2 text-red-500 hover:bg-red-50 rounded-lg"
+                        className="p-2 text-red-500 hover:bg-red-50 rounded-lg transition"
+                        title="Delete"
                       >
                         <Trash2 size={18} />
                       </button>
@@ -145,7 +186,6 @@ export default function ManageBooksPage() {
         </div>
       </div>
 
-      {/* Modal */}
       <BookFormModal
         isOpen={isFormOpen}
         onClose={() => setIsFormOpen(false)}
