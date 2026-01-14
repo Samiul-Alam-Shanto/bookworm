@@ -20,7 +20,7 @@ export default function ActivityFeed() {
     );
 
   return (
-    <div className="bg-card border border-border rounded-xl p-6 shadow-sm h-full max-h-150 overflow-y-auto">
+    <div className="bg-card border border-border rounded-xl p-6 shadow-sm h-full max-h-217 overflow-y-auto">
       <h3 className="text-lg font-bold font-serif mb-6 flex items-center gap-2">
         <User size={20} className="text-primary" /> Community Feed
       </h3>
