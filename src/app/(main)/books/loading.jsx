@@ -1,13 +1,57 @@
-import { Loader2 } from "lucide-react";
-
 export default function Loading() {
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center bg-background/80 backdrop-blur-sm">
-      <div className="flex flex-col items-center gap-4">
-        <Loader2 className="animate-spin text-primary" size={48} />
-        <p className="text-muted-foreground font-medium animate-pulse">
-          Loading BookWorm...
-        </p>
+    <div className="container mx-auto px-4 py-8 animate-pulse">
+      {/* ---------------- Header ---------------- */}
+      <div className="mb-8">
+        <div className="h-10 w-105 bg-muted rounded mb-3" />
+        <div className="h-4 w-70 bg-muted rounded" />
+      </div>
+
+      {/* ---------------- Search + Sort + Filter ---------------- */}
+      <div className="flex flex-col md:flex-row gap-4 mb-10">
+        {/* Search */}
+        <div className="flex-1 h-12 bg-muted rounded-lg" />
+
+        {/* Sort */}
+        <div className="h-12 w-45 bg-muted rounded-lg" />
+
+        {/* Filter */}
+        <div className="h-12 w-30 bg-muted rounded-lg" />
+      </div>
+
+      {/* ---------------- Books Grid ---------------- */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-x-6 gap-y-10">
+        {Array.from({ length: 8 }).map((_, i) => (
+          <BookCardSkeleton key={i} />
+        ))}
+      </div>
+
+      {/* ---------------- Pagination ---------------- */}
+      <div className="flex justify-center gap-2 mt-12">
+        {Array.from({ length: 5 }).map((_, i) => (
+          <div key={i} className="h-9 w-9 bg-muted rounded-md" />
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function BookCardSkeleton() {
+  return (
+    <div className="space-y-3">
+      {/* Book Cover */}
+      <div className="aspect-3/4 bg-muted rounded-xl" />
+
+      {/* Title */}
+      <div className="h-4 bg-muted rounded w-4/5" />
+
+      {/* Author */}
+      <div className="h-3 bg-muted rounded w-3/5" />
+
+      {/* Rating + Genre */}
+      <div className="flex items-center gap-3">
+        <div className="h-3 w-12 bg-muted rounded" />
+        <div className="h-3 w-16 bg-muted rounded" />
       </div>
     </div>
   );
