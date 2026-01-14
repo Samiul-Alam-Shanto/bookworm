@@ -17,6 +17,7 @@ import {
   BookOpen,
   Quote,
 } from "lucide-react";
+import DemoCredentials from "@/components/DemoCredentials";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -122,6 +123,7 @@ export default function LoginPage() {
               <div className="h-1.5 w-12 bg-primary mt-3 rounded-full" />
             </motion.div>
           </div>
+          <DemoCredentials />
 
           <form onSubmit={handleSubmit(onSubmit)} className="space-y-8">
             {/* Email Field */}
