@@ -45,9 +45,11 @@ export default function MyLibraryPage() {
   return (
     <div className="container mx-auto px-4 py-8">
       {/* Header */}
-      <div className="flex flex-col md:flex-row justify-between items-end mb-8 gap-4">
+      <div className="flex flex-col md:flex-row justify-center items-center md:justify-between md:items-end mb-8 gap-4">
         <div>
-          <h1 className="text-4xl font-bold font-serif mb-2">My Library</h1>
+          <h1 className="text-4xl  text font-bold font-serif mb-2">
+            My Library
+          </h1>
           <p className="text-muted-foreground">
             {libraryItems.length} books in your collection
           </p>
